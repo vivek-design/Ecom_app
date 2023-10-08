@@ -4,12 +4,16 @@
 
 const express= require("express");
 const mongoose=require("mongoose");
+const adminRouter = require("./routes/admin");
 const db="mongodb+srv://Vaibhav:vaibhav123@cluster0.vcotonn.mongodb.net/?retryWrites=true&w=majority"
 const authRouter=require("./routes/auth");
+const productRouter = require("./routes/product");
 //Import from other files
 const app=express();
 app.use(express.json());
-app.use( authRouter);
+app.use(authRouter);
+app.use(adminRouter);
+app.use(productRouter);
 
 //middleware
 //client -> middleware ->server ->client 

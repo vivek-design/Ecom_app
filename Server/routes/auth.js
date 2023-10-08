@@ -90,7 +90,7 @@ authRouter.post('/signup', async(req,res)=>{
       if(!user)return res.json(false);
       res.json(true); 
     }catch(e){
-     return  res.status(500).json({error:e.message});
+      return  res.status(500).json({error:e.message});
     }
   });
 
@@ -106,7 +106,7 @@ authRouter.post('/signup', async(req,res)=>{
              res.json({...user._doc,token:req.token});
            
         }catch(e){
-
+          return  res.status(500).json({error:e.message});
         }
   });
 

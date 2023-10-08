@@ -1,32 +1,49 @@
-import 'package:amazon/Provider/userprovider.dart';
-import 'package:amazon/home/Search/screens/search_screen.dart';
+import 'package:amazon/Constants/global_variable.dart';
+import 'package:amazon/Models/product.dart';
+import 'package:amazon/home/Search/services/search_searvices.dart';
 import 'package:amazon/home/widgets/address_box.dart';
-import 'package:amazon/home/widgets/crousel_image.dart';
-import 'package:amazon/home/widgets/deal_of_day.dart';
-import 'package:amazon/home/widgets/top_categories.dart';
+import 'package:amazon/home/widgets/searhed_product.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../../Constants/global_variable.dart';
+class SearchScreen extends StatefulWidget {
+  static const String routeName = '/searchscreen';
+  final String searchQuery;
 
-class HomeScreen extends StatefulWidget {
-  static const String routeName = '/home';
-  const HomeScreen({super.key});
+  SearchScreen({super.key, required this.searchQuery});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  void navigateToSearchScreen(String query) {
+class _SearchScreenState extends State<SearchScreen> {
+  List<Product>? products;
+  final SearchServices searchServices = SearchServices();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchSearchedPeoduct();
+  }
+
+  void fetchSearchedPeoduct() async {
+    products = await searchServices.fetchSearchedProduct(
+        context: context, searchQuery: widget.searchQuery);
+  setState(() {
+    
+  });
+  
+  }
+
+    void navigateToSearchScreen(String query) {
     Navigator.pushNamed(context, SearchScreen.routeName,arguments: query);
   }
 
   @override
   Widget build(BuildContext context) {
-    final user = Provider.of<UserProvider>(context).user;
-    return Scaffold(
-        appBar: PreferredSize(
+    return products==null?const CircularProgressIndicator(): Scaffold(
+
+    appBar:   PreferredSize(
           preferredSize: const Size.fromHeight(60),
           child: AppBar(
             //we do not have gradient feature in appbar
@@ -88,21 +105,24 @@ class _HomeScreenState extends State<HomeScreen> {
                 ]),
           ),
         ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              AddressBox(),
-              SizedBox(
-                height: 10,
-              ),
-              TopCatagories(),
-              SizedBox(
-                height: 10,
-              ),
-              CrouserImage(),
-              DealOfDay(),
-            ],
+
+      body: Column(
+        children: [
+          const AddressBox(),
+          const SizedBox(
+             height: 10,
           ),
-        ));
+          Expanded(child:
+          ListView.builder(itemCount: products!.length,itemBuilder:((context, index){
+               
+               return SearchedProduct(product: products![index]);
+
+          })
+          )
+          ),
+
+        ],
+      )
+    );
   }
 }
